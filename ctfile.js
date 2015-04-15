@@ -37,7 +37,7 @@ CTFile.prototype.getVersion = function () {
  *	@return {Bolean} type from the flag string
  */
 var parseFlag = function (flag) {
-	return ((parseInt(flag) == 1) || /^\s*true\s*$/.test(flag))? true : false;
+	return (/^\s*((true)|1)\s*$/.test(flag))? true : false;
 };
 
 /*
