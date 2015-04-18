@@ -32,3 +32,8 @@ describe('Test internal function parseFlag', function () {
 	});
 });
 
+describe('Test internal function molfileHeaderTemplate', function () {
+	it('should return true', function () {
+		assert.equal(true, ctfile.ut_getMolHeaderPattern().hasOwnProperty('description'));
+	});
+});

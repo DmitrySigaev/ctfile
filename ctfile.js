@@ -119,5 +119,13 @@ CTFile.prototype.ut_parseFlag = function (flag) {
 	return parseFlag(flag);
 };
 
+/*
+ *	UT:Get molfileHeaderTemplate Object
+ *	@method ut_getMolHeaderPattern
+ *	@return {Object} molfileHeaderTemplate 
+ */
+CTFile.prototype.ut_getMolHeaderPattern = function () {
+	return molfileHeaderTemplate;
+};
 
 module.exports = new CTFile ();
