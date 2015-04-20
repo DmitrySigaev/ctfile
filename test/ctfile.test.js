@@ -37,3 +37,10 @@ describe('Test internal function molfileHeaderTemplate', function () {
 		assert.equal(true, ctfile.ut_getMolHeaderPattern().hasOwnProperty('description'));
 	});
 });
+
+describe('Test internal function poundoutMaske', function () {
+	it('should compare with patterns', function () {
+		assert.equal('AAAAAA', ctfile.ut_poundoutMask('A1A2A3'));
+		assert.equal('ABBCCC', ctfile.ut_poundoutMask('A1B2C3'));
+	});
+});

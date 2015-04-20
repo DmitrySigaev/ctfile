@@ -31,6 +31,19 @@ CTFile.prototype.getVersion = function () {
 };
 
 /*
+ *	Converts FORTRAN notation like  A2 to AA
+ *	@method poundoutMask
+ *	@param {String} mask the string to pound out
+ *	@return {String} a new string with digitals replaced by a char
+ */
+var poundoutMask = function (mask) {
+	if (/(\w)(\d+)/.test(mask)) {
+		/* convert FORTRAN notation like  A2 to AA */
+		return mask.replace(/(\w)(\d+)/g, function (match, p1, p2) { return p1.repeat(parseInt(p2)) });
+	}
+}
+
+/*
  *	Parses a string to check line by a template. Converts string data to boolean
  *	@method parseFlag
  *	@param {String} flag the string to parse
@@ -128,4 +141,14 @@ CTFile.prototype.ut_getMolHeaderPattern = function () {
 	return molfileHeaderTemplate;
 };
 
+/*
+ *	UT:Converts FORTRAN notation like  A2 to AA
+ *	@method ut_poundoutMask
+ *	@param {String} mask the string to pound out
+ *	@return {String} a new string with digitals replaced by a char
+ */
+
+CTFile.prototype.ut_poundoutMask = function (mask) {
+	return poundoutMask(mask);
+};
 module.exports = new CTFile ();
