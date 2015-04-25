@@ -46,3 +46,11 @@ describe('Test internal function poundoutMaske', function () {
 		assert.equal(undefined, ctfile.ut_poundoutMask('\n2'));
 	});
 });
+
+
+describe('Test internal function parseLineByTemplate', function () {
+	it('should compare with patterns', function () {
+		assert.deepStrictEqual({ name: 'Test 1' }, ctfile.ut_parseLineByTemplate('Test 1', ctfile.ut_getMolHeaderPattern().line1));
+	});
+});
+

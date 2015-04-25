@@ -110,6 +110,46 @@ var molfileHeaderTemplate = {
 };
 
 /*
+ *	Parses a line by a template
+ *	@method parseLineByTemplate
+ *	@param {string} line the line to parse
+ *	@param {Object} template the template of lined data consists from mask and format
+ *	@param {string=} separator(optional). Specifies the character(s) to use for parsing the line by template
+  *	@return {Object} data from the line
+ */
+var parseLineByTemplate = function (line, template, separator) {
+	var mask = poundoutMask(template.mask);
+	var format = template.format;
+	var out = {};
+	
+	/*
+	note: "How to do a fast check: Each line of templated data has a mask. Mask length is the longest length of structured data. Firstly we should compare Mask.length with split data."
+	*/
+
+	for (var i = 0; i < mask.length && i < line.length; i++) {
+		if (line[i] !== separator) {
+			var token = format[mask[i]];
+			if (token === undefined)
+				continue;
+			if (out[token.key] === undefined)
+				out[token.key] = '';
+			out[token.key] += line[i];
+		}
+	}
+	
+	Object.keys(format).forEach(function (char) {
+		var token = format[char];
+		if (out[token.key] !== undefined) {
+			out[token.key] = token.fn(out[token.key]);
+		} else {
+			if (token.def !== undefined)
+				out[token.key] = token.def;
+		}
+	});
+	return out;
+};
+
+/*
  *    Parses a CTAB record and returns an Object
  *    @method parseCTfileFormat
  *    @param {String} mol the complete molfile, including newlines
@@ -147,8 +187,19 @@ CTFile.prototype.ut_getMolHeaderPattern = function () {
  *	@param {String} mask the string to pound out
  *	@return {String} a new string with digitals replaced by a char
  */
-
 CTFile.prototype.ut_poundoutMask = function (mask) {
 	return poundoutMask(mask);
 };
-module.exports = new CTFile ();
+
+/*
+ *	UT: Parses a line by a template
+ *	@method parseLineByTemplate
+ *	@param {String} line the line to parse
+ *	@param {Object} template the template of lined data consists from mask and format
+ *	@return {Object} data from the line
+ */
+CTFile.prototype.ut_parseLineByTemplate = function (line, template) {
+	return parseLineByTemplate(line, template);
+};
+
+module.exports = new CTFile();
