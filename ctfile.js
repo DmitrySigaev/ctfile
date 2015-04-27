@@ -34,13 +34,14 @@ CTFile.prototype.getVersion = function () {
  *	Converts FORTRAN notation like  A2 to AA
  *	@method poundoutMask
  *	@param {String} mask the string to pound out
- *	@return {String} a new string with digitals replaced by a char
+ *	@return {String} a new string with digitals replaced by a char or return input mask
  */
 var poundoutMask = function (mask) {
 	if (/(\w)(\d+)/.test(mask)) {
 		/* convert FORTRAN notation like  A2 to AA */
 		return mask.replace(/(\w)(\d+)/g, function (match, p1, p2) { return p1.repeat(parseInt(p2)) });
 	}
+	return mask;
 }
 
 /*
@@ -66,7 +67,7 @@ var molfileHeaderTemplate = {
 		description: "Molecule name. This line is unformatted, but like all other lines in a molfile cannot extend beyond column 80. If no name is available, a blank line must be present.",
 		rep: function (x) { return x.replace(/;/g, ' '); }, // type = 1;
 		check_zero: /(\d[23]D)|(V[23]000)/, /* regular expression object for matching text in line with keys of next lines*/
-		mask: 'N40N40', /* (FORTRAN notation: A2<--A8--><---A10-->A2I2<--F10.5-><---F12.5--><-I6-> ) */
+		mask: 'N80', /* (FORTRAN notation: A2<--A8--><---A10-->A2I2<--F10.5-><---F12.5--><-I6-> ) */
 		format : { 'N': { key: 'name', fn: String, def: " " } }
 	},
 	line2 : {
@@ -91,7 +92,7 @@ var molfileHeaderTemplate = {
 		description: "A line for comments.If no comment is available, a blank line must be present.",
 		rep: function (x) { return x.replace(/;/g, ' '); }, // type = 1;
 		check_zero: /V[23]000/,
-		mask: 'N40N40',
+		mask: 'N80',
 		format : { 'N': { key: 'comments', fn: String, def: " " } }
 	},
 	line4 : {
@@ -193,13 +194,15 @@ CTFile.prototype.ut_poundoutMask = function (mask) {
 
 /*
  *	UT: Parses a line by a template
- *	@method parseLineByTemplate
- *	@param {String} line the line to parse
+ *	@method ut_parseLineByTemplate
+ *	@param {string} line the line to parse
  *	@param {Object} template the template of lined data consists from mask and format
- *	@return {Object} data from the line
+ *	@param {string=} separator(optional). Specifies the character(s) to use for parsing the line by template
+  *	@return {Object} data from the line
  */
-CTFile.prototype.ut_parseLineByTemplate = function (line, template) {
-	return parseLineByTemplate(line, template);
+
+CTFile.prototype.ut_parseLineByTemplate = function (line, template, separator) {
+	return parseLineByTemplate(line, template, separator);
 };
 
 module.exports = new CTFile();
