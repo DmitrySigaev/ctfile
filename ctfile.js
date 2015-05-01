@@ -150,6 +150,23 @@ var parseLineByTemplate = function (line, template, separator) {
 	return out;
 };
 
+
+/*
+ *	Clean set of white space characters from string
+ *	@method cleanWSChs
+ *	@param {string} str the str to clean
+ *	@param {string=} separator(optional). Specifies the character(s) to use as a separator in returned string
+  *	@return {string} A new string where white space charactes clean
+ */
+var cleanWSChs = function (str, separator) {
+	var tempstr = str.replace(/\n+/gi, '\u9787'); /* \u9787 is an emoticon */
+	tempstr = tempstr.replace(/\s+/gi, '\u9787');
+	tempstr = tempstr.replace(/(\u9787){2,}/gi, '\n');
+	separator = (separator === undefined)?';':separator;
+	tempstr = tempstr.replace(/\u9787/gi, separator);
+	return tempstr;
+}
+
 /*
  *    Parses a CTAB record and returns an Object
  *    @method parseCTfileFormat
@@ -205,4 +222,14 @@ CTFile.prototype.ut_parseLineByTemplate = function (line, template, separator) {
 	return parseLineByTemplate(line, template, separator);
 };
 
+/*
+ *	UT: Clean set of white space characters from string
+ *	@method ut_cleanWSChs
+ *	@param {string} str the str to clean
+ *	@param {string=} separator(optional). Specifies the character(s) to use as a separator in returned string
+  *	@return {string} A new string where white space charactes clean
+ */
+CTFile.prototype.ut_cleanWSChs = function (str, separator) {
+	return cleanWSChs(str, separator);
+};
 module.exports = new CTFile();
