@@ -168,6 +168,24 @@ var cleanWSChs = function (str, separator) {
 }
 
 /*
+ *	Clean set of white space characters from string
+ *	@method cleanWSChs2
+ *	@param {string} str the str to clean
+ *	@param {string=} separator(optional). Specifies the character(s) to use as a separator in returned string
+  *	@return {string} A new string where white space charactes clean
+ */
+var cleanWSChs2 = function (str, separator) {
+	var tempstr = str.replace(/\n+/gi, '\u9787\u9788\u9787'); /* \u9787 is an emoticon */
+	tempstr = tempstr.replace(/\s+/gi, '\u9787');
+	tempstr = tempstr.replace(/(\u9787){2,}/gi, '@');
+	separator = (separator === undefined)?';':separator;
+	tempstr = tempstr.replace(/\u9787/gi, separator);
+	tempstr = tempstr.replace(/\u9788/gi, '@');
+	tempstr = tempstr.replace(RegExp(''+separator+'*'+'@+'+separator + '*', 'gi'), '@');
+	return tempstr;
+}
+
+/*
  *    Parses a CTAB record and returns an Object
  *    @method parseCTfileFormat
  *    @param {String} mol the complete molfile, including newlines
@@ -232,4 +250,16 @@ CTFile.prototype.ut_parseLineByTemplate = function (line, template, separator) {
 CTFile.prototype.ut_cleanWSChs = function (str, separator) {
 	return cleanWSChs(str, separator);
 };
+
+/*
+ *	UT: Clean set of white space characters from string
+ *	@method ut_cleanWSChs
+ *	@param {string} str the str to clean
+ *	@param {string=} separator(optional). Specifies the character(s) to use as a separator in returned string
+  *	@return {string} A new string where white space charactes clean
+ */
+CTFile.prototype.ut_cleanWSChs2 = function (str, separator) {
+	return cleanWSChs2(str, separator);
+};
+
 module.exports = new CTFile();

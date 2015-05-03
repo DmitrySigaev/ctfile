@@ -77,3 +77,25 @@ describe('Test internal function cleanWSChs', function () {
 	});
 });
 
+describe('Test internal function cleanWSChs2', function () {
+	it('should compare with patterns', function () {
+		assert.equal('ACETYLCHOLINE & stuff', ctfile.ut_cleanWSChs2('ACETYLCHOLINE & stuff', ' '));
+		assert.equal('ACETYLCHOLINE;&;stuff', ctfile.ut_cleanWSChs2('ACETYLCHOLINE & stuff'));
+		assert.equal('@ACETYLCHOLINE;&;stuff', ctfile.ut_cleanWSChs2('\n   \n\n   \nACETYLCHOLINE & stuff'));
+		assert.equal('@ACETYLCHOLINE & stuff', ctfile.ut_cleanWSChs2('\n   \n\n   \nACETYLCHOLINE & stuff', ' '));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n   \n\n   \nACETYLCHOLINE & stuff\n', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n   \n\n   \nACETYLCHOLINE & stuff\n ', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n   \n\n   \nACETYLCHOLINE & stuff\n\n', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n   \n\n   \nACETYLCHOLINE & stuff\n   \n   \n', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\nACETYLCHOLINE & stuff\n   \n   \n', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n\nACETYLCHOLINE & stuff\n   \n   \n', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n\n\nACETYLCHOLINE  & stuff\n   \n   \n', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n\n\nACETYLCHOLINE &  \rstuff\n\n   \n   \n', ';'));
+		assert.equal('@ACETYLCHOLINE & stuff@', ctfile.ut_cleanWSChs2('\n\n\nACETYLCHOLINE & stuff\n\n\n', ' '));
+		assert.equal('@ACETYLCHOLINE;&;stuff@', ctfile.ut_cleanWSChs2('\n\n\r\nACETYLCHOLINE & stuff\n\r\n\n', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@GTMACCS-II11299515322D;1;0.00377;0.00000;0;GST', ctfile.ut_cleanWSChs2('\n\n\nACETYLCHOLINE & stuff\n\n\nGTMACCS-II11299515322D 1   0.00377     0.00000     0    GST', ';'));
+		assert.equal('@ACETYLCHOLINE;&;stuff@GTMACCS-II11299515322D;1;0.00377;0.00000;0;GST', ctfile.ut_cleanWSChs2('\n\n\nACETYLCHOLINE & stuff\n\n\r\nGTMACCS-II11299515322D 1   0.00377     0.00000     0    GST', ';'));
+
+	});
+});
+
