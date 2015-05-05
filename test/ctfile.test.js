@@ -99,3 +99,10 @@ describe('Test internal function cleanWSChs2', function () {
 	});
 });
 
+
+describe('Test internal function cleanInvChars', function () {
+	it('should compare with patterns', function () {
+		assert.equal('\nACETYLCHOLINE & stuff\n   \n   \n', ctfile.ut_cleanInvChars('\n\r\f\v\tACETYLCHOLINE & stuff\n  \r\f\v \t\n \u00a0\u00a0  \n', ';'));
+	});
+});
+

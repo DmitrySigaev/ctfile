@@ -186,6 +186,21 @@ var cleanWSChs2 = function (str, separator) {
 }
 
 /*
+ *	Clean invisible characters (any Unicode spaces unless \n and ' ')
+ *	@method cleanInvChars
+ *	@param {string} str the str to clean
+  *	@return {string} A new string where white space charactes clean unless \n and ' '
+ */
+var cleanInvChars = function (str) {
+	var tempstr = str.replace(/\n/gi, '\u9787'); /* \u9787 is an emoticon */
+	tempstr = tempstr.replace(/ /gi, '\u9786'); /* \u9786 is an emoticon */
+	tempstr = tempstr.replace(/\s+/gi, '');
+	tempstr = tempstr.replace(/\u9787/gi, '\n');
+	tempstr = tempstr.replace(/\u9786/gi, ' ');
+	return tempstr;
+}
+
+/*
  *    Parses a CTAB record and returns an Object
  *    @method parseCTfileFormat
  *    @param {String} mol the complete molfile, including newlines
@@ -260,6 +275,16 @@ CTFile.prototype.ut_cleanWSChs = function (str, separator) {
  */
 CTFile.prototype.ut_cleanWSChs2 = function (str, separator) {
 	return cleanWSChs2(str, separator);
+};
+
+/*
+ *	Clean invisible characters (any Unicode spaces unless \n and ' ')
+ *	@method ut_cleanInvChars
+ *	@param {string} str the str to clean
+  *	@return {string} A new string where white space charactes clean unless \n and ' '
+ */
+CTFile.prototype.ut_cleanInvChars = function (str) {
+	return cleanInvChars(str);
 };
 
 module.exports = new CTFile();
