@@ -45,6 +45,20 @@ var poundoutMask = function (mask) {
 }
 
 /*
+ *	Converts FORTRAN notation like  A2 to AA or '.2' to '..'
+ *	@method poundoutMaskExt
+ *	@param {String} mask the string to pound out
+ *	@return {String} a new string with digitals replaced by a char or return input mask
+ */
+var poundoutMaskExt = function (mask) {
+	if (/(\S)(\d+)/.test(mask)) {
+		/* convert FORTRAN notation like  A2 to AA */
+		return mask.replace(/(\S)(\d+)/g, function (match, p1, p2) { return p1.repeat(parseInt(p2)) });
+	}
+	return mask;
+}
+
+/*
  *	Parses a string to check line by a template. Converts string data to boolean
  *	@method parseFlag
  *	@param {String} flag the string to parse
@@ -240,6 +254,16 @@ CTFile.prototype.ut_getMolHeaderPattern = function () {
  */
 CTFile.prototype.ut_poundoutMask = function (mask) {
 	return poundoutMask(mask);
+};
+
+/*
+*	UT:Converts FORTRAN notation like  A2 to AA or '.2' to '..'
+*	@method ut_poundoutMask
+*	@param {String} mask the string to pound out
+*	@return {String} a new string with digitals replaced by a char
+*/
+CTFile.prototype.ut_poundoutMaskExt = function (mask) {
+	return poundoutMaskExt(mask);
 };
 
 /*

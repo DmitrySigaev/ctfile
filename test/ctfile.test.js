@@ -38,13 +38,25 @@ describe('Test internal function molfileHeaderTemplate', function () {
 	});
 });
 
-describe('Test internal function poundoutMaske', function () {
+describe('Test internal function poundoutMask', function () {
 	it('should compare with patterns', function () {
+		assert.equal('AAAAAA', ctfile.ut_poundoutMask('AAAAAA'));
 		assert.equal('AAAAAA', ctfile.ut_poundoutMask('A1A2A3'));
 		assert.equal('ABBCCC', ctfile.ut_poundoutMask('A1B2C3'));
 		assert.equal('(ma)2 hello~2world! 2aaa', ctfile.ut_poundoutMask('(ma)2 hel2o~2world! 2a3'));
 		assert.equal('\n2', ctfile.ut_poundoutMask('\n2'));
 		assert.equal('\ra{aa', ctfile.ut_poundoutMask('\ra{a2'));
+	});
+});
+
+describe('Test internal function poundoutMaskExt', function () {
+	it('should compare with patterns', function () {
+		assert.equal('AAAAAA', ctfile.ut_poundoutMaskExt('AAAAAA'));
+		assert.equal('AAAAAA', ctfile.ut_poundoutMaskExt('A1A2A3'));
+		assert.equal('ABBCCC', ctfile.ut_poundoutMaskExt('A1B2C3'));
+		assert.equal('(ma)2 hello~2world! 2aaa', ctfile.ut_poundoutMaskExt('(ma)2 hel2o~2world! 2a3'));
+		assert.equal('\n2', ctfile.ut_poundoutMaskExt('\n2'));
+		assert.equal('\ra{aa', ctfile.ut_poundoutMaskExt('\ra{a2'));
 	});
 });
 
