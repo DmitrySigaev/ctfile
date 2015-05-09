@@ -37,7 +37,7 @@ CTFile.prototype.getVersion = function () {
  *	@return {String} a new string with digitals replaced by a char or return input mask
  */
 var poundoutMask = function (mask) {
-	if (/(\w)(\d+)/.test(mask)) {
+	if (/\w\d+/.test(mask)) {
 		/* convert FORTRAN notation like  A2 to AA */
 		return mask.replace(/(\w)(\d+)/g, function (match, p1, p2) { return p1.repeat(parseInt(p2)) });
 	}
@@ -45,14 +45,15 @@ var poundoutMask = function (mask) {
 }
 
 /*
- *	Converts FORTRAN notation like  A2 to AA or '.2' to '..'
+ *	Converts FORTRAN notation like  A2 to AA or '.2' to '..' and '\d2 to '\d\d' 
  *	@method poundoutMaskExt
  *	@param {String} mask the string to pound out
  *	@return {String} a new string with digitals replaced by a char or return input mask
  */
 var poundoutMaskExt = function (mask) {
-	if (/(\S)(\d+)/.test(mask)) {
+	if (/\\\S\d+|\S\d+/.test(mask)) {
 		/* convert FORTRAN notation like  A2 to AA */
+		mask = mask.replace(/(\\\S)(\d+)/g, function (match, p1, p2) { return p1.repeat(parseInt(p2)) });
 		return mask.replace(/(\S)(\d+)/g, function (match, p1, p2) { return p1.repeat(parseInt(p2)) });
 	}
 	return mask;

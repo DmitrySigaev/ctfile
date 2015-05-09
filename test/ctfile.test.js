@@ -54,10 +54,12 @@ describe('Test internal function poundoutMaskExt', function () {
 		assert.equal('AAAAAA', ctfile.ut_poundoutMaskExt('AAAAAA'));
 		assert.equal('AAAAAA', ctfile.ut_poundoutMaskExt('A1A2A3'));
 		assert.equal('ABBCCC', ctfile.ut_poundoutMaskExt('A1B2C3'));
-		assert.equal('(ma)2 hello~2world! 2aaa', ctfile.ut_poundoutMaskExt('(ma)2 hel2o~2world! 2a3'));
+		assert.equal('(ma)) hello~~world! 2aaa', ctfile.ut_poundoutMaskExt('(ma)2 hel2o~2world! 2a3'));
 		assert.equal('\n2', ctfile.ut_poundoutMaskExt('\n2'));
+		assert.equal('\\n\\n', ctfile.ut_poundoutMaskExt('\\n2'));
 		assert.equal('\ra{aa', ctfile.ut_poundoutMaskExt('\ra{a2'));
-	});
+		assert.equal('\\d\\d', ctfile.ut_poundoutMaskExt('\\d2'));
+		assert.equal('\\r\\rabb!!!!test\\n\\n', ctfile.ut_poundoutMaskExt('\\r2a1b2!4test\\n\\n1'));	});
 });
 
 
