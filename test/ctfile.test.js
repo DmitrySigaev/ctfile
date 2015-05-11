@@ -59,9 +59,15 @@ describe('Test internal function poundoutMaskExt', function () {
 		assert.equal('\\n\\n', ctfile.ut_poundoutMaskExt('\\n2'));
 		assert.equal('\ra{aa', ctfile.ut_poundoutMaskExt('\ra{a2'));
 		assert.equal('\\d\\d', ctfile.ut_poundoutMaskExt('\\d2'));
-		assert.equal('\\r\\rabb!!!!test\\n\\n', ctfile.ut_poundoutMaskExt('\\r2a1b2!4test\\n\\n1'));	});
+		assert.equal('\\r\\rabb!!!!test\\n\\n', ctfile.ut_poundoutMaskExt('\\r2a1b2!4test\\n\\n1'));
+	});
 });
 
+describe('Test internal function countRegExpEntry', function () {
+	it('should compare with patterns', function () {
+		assert.equal(4, ctfile.ut_countRegExpEntry(/@1/g, '1@12@1 ` ~@1 02 @1@2'));
+	});
+});
 
 describe('Test internal function parseLineByTemplate', function () {
 	it('should compare with patterns', function () {

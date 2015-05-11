@@ -70,6 +70,37 @@ var parseFlag = function (flag) {
 };
 
 /*
+ *	Clean invisible characters (any Unicode spaces unless \n and ' ')
+ *	@method cleanInvChars
+ *	@param {string} str the str to clean
+  *	@return {string} A new string where white space charactes clean unless \n and ' '
+ */
+var cleanInvChars = function (str) {
+	var tempstr = str.replace(/\n/gi, '\u9787'); /* \u9787 is an emoticon */
+	tempstr = tempstr.replace(/ /gi, '\u9786'); /* \u9786 is an emoticon */
+	tempstr = tempstr.replace(/\s+/gi, '');
+	tempstr = tempstr.replace(/\u9787/gi, '\n');
+	tempstr = tempstr.replace(/\u9786/gi, ' ');
+	return tempstr;
+}
+
+/*
+ *	Clean invisible characters (any Unicode spaces unless \n and ' ')
+ *	@method cleanInvChars
+ *	@param {string} str the str to clean
+  *	@return {string} A new string where white space charactes clean unless \n and ' '
+ */
+var cleanInvChars2 = function (str) {
+	var tempstr = str.replace(/\n/gi, '\u9787'); /* \u9787 is an emoticon */
+	tempstr = tempstr.replace(/ /gi, '\u9786'); /* \u9786 is an emoticon */
+	tempstr = tempstr.replace(/\s+/gi, '');
+	tempstr = tempstr.replace(/\u9787/gi, '@');
+	tempstr = tempstr.replace(/\u9786/gi, ' ');
+	return tempstr;
+}
+
+
+/*
  * Molfile
  * By now there are two version of Molfile format: V2000 and V3000
  * V2000 and V3000 have common header structure but they have different ctab data.
@@ -78,6 +109,7 @@ var parseFlag = function (flag) {
  */
 var molfileHeaderTemplate = {
 	description: "Header Template for V2000 and V3000 Molfiles. Identifies the molfile: molecule name, user's name, program, date, and other miscellaneous information and comments",
+	preprocess: cleanInvChars,
 	line1 : {
 		description: "Molecule name. This line is unformatted, but like all other lines in a molfile cannot extend beyond column 80. If no name is available, a blank line must be present.",
 		rep: function (x) { return x.replace(/;/g, ' '); }, // type = 1;
@@ -112,6 +144,8 @@ var molfileHeaderTemplate = {
 	},
 	line4 : {
 		description: "V2000 commonly",
+		re_find: /V[23]000/g,
+		re_check: RegExp('\\n' + poundoutMaskExt('.34') + 'V[23]000', 'g'),
 		mask: 'aaabbblllfffcccsssxxxrrrpppiiimmmvvvvvv',
 		format: {
 			'a': { key: 'numAtoms', fn: parseInt, def: 0 },
@@ -131,7 +165,7 @@ var molfileHeaderTemplate = {
  *	@param {string} line the line to parse
  *	@param {Object} template the template of lined data consists from mask and format
  *	@param {string=} separator(optional). Specifies the character(s) to use for parsing the line by template
-  *	@return {Object} data from the line
+ *	@return {Object} data from the line
  */
 var parseLineByTemplate = function (line, template, separator) {
 	var mask = poundoutMask(template.mask);
@@ -165,6 +199,17 @@ var parseLineByTemplate = function (line, template, separator) {
 	return out;
 };
 
+/*
+ *	Counts for a match between a regular expression and a specified string 
+ *	@method countRegExpEntry
+ *	@param {Object} re the regular expression object.
+ *	@return {number} A number of a match on the same global regular expression
+ */
+var countRegExpEntry = function (re, str) {
+	var count = 0;
+	while (re.test(str)) { count++; } //  test() called multiple times on the same global regular expression instance will advance past the previous match
+	return count;
+}
 
 /*
  *	Clean set of white space characters from string
@@ -197,21 +242,6 @@ var cleanWSChs2 = function (str, separator) {
 	tempstr = tempstr.replace(/\u9787/gi, separator);
 	tempstr = tempstr.replace(/\u9788/gi, '@');
 	tempstr = tempstr.replace(RegExp(''+separator+'*'+'@+'+separator + '*', 'gi'), '@');
-	return tempstr;
-}
-
-/*
- *	Clean invisible characters (any Unicode spaces unless \n and ' ')
- *	@method cleanInvChars
- *	@param {string} str the str to clean
-  *	@return {string} A new string where white space charactes clean unless \n and ' '
- */
-var cleanInvChars = function (str) {
-	var tempstr = str.replace(/\n/gi, '\u9787'); /* \u9787 is an emoticon */
-	tempstr = tempstr.replace(/ /gi, '\u9786'); /* \u9786 is an emoticon */
-	tempstr = tempstr.replace(/\s+/gi, '');
-	tempstr = tempstr.replace(/\u9787/gi, '\n');
-	tempstr = tempstr.replace(/\u9786/gi, ' ');
 	return tempstr;
 }
 
@@ -303,7 +333,7 @@ CTFile.prototype.ut_cleanWSChs2 = function (str, separator) {
 };
 
 /*
- *	Clean invisible characters (any Unicode spaces unless \n and ' ')
+ *	UT: Clean invisible characters (any Unicode spaces unless \n and ' ')
  *	@method ut_cleanInvChars
  *	@param {string} str the str to clean
   *	@return {string} A new string where white space charactes clean unless \n and ' '
@@ -311,5 +341,15 @@ CTFile.prototype.ut_cleanWSChs2 = function (str, separator) {
 CTFile.prototype.ut_cleanInvChars = function (str) {
 	return cleanInvChars(str);
 };
+
+/*
+ *	UT: Counts for a match between a regular expression and a specified string 
+ *	@method countRegExpEntry
+ *	@param {Object} re the regular expression object.
+ *	@return {number} A number of a match on the same global regular expression
+ */
+CTFile.prototype.ut_countRegExpEntry = function (re, str) {
+	return countRegExpEntry(re, str);
+}
 
 module.exports = new CTFile();
