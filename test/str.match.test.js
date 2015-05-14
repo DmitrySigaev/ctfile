@@ -66,8 +66,19 @@ describe('Test String.prototype.match', function () {
 		assert.equal('V2000ab', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi)[0]);
 		assert.equal('V3000a', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi)[1]);
 		assert.equal('v2000', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi)[2]);
-		//'@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi)
-
-
+		/*let's remove global flag */
+		assert.equal(true, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i).hasOwnProperty('length'));
+		assert.equal(2, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i).length);
+		assert.equal(true, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i).hasOwnProperty('index'));
+		assert.equal(1, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i).index);
+		assert.equal(true, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i).hasOwnProperty('input'));
+		assert.equal('@V2000ab@03V3000a!v2000', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i).input);
+		assert.equal('V2000ab', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i)[0]);
+		assert.equal('ab', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/i)[1]);
+		/* compare to above :) */
+		assert.equal('b', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w)*/i)[1]);
+		/* again */
+		assert.equal('abcd', '@V2000abcd@03V3000a!v2000'.match(/v[23]000(\w\w*)/i)[1]);
+		assert.equal('cd', '@V2000abcd@03V3000a!v2000'.match(/v[23]000(\w\w)*/i)[1]);
 	});
 });
