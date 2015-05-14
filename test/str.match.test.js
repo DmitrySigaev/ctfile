@@ -38,5 +38,19 @@ describe('Test String.prototype.match', function () {
 		assert.equal('Chapter 3.4.5.1', 'For more information, see Chapter 3.4.5.1'.match(/see (chapter \d+(\.\d)*)/i)[1]);
 		assert.equal('.1', 'For more information, see Chapter 3.4.5.1'.match(/see (chapter \d+(\.\d)*)/i)[2]);
 
+		// Using global and ignore case flags with match()
+		// The following example demonstrates the use of the global and ignore case flags with match().Allletters A through E and a through e are returned, each its own element in the array.
+
+		// var str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+		// var regexp = /[A-E]/gi;
+		// var matches_array = str.match(regexp);
+		// console.log(matches_array);
+		// ['A', 'B', 'C', 'D', 'E', 'a', 'b', 'c', 'd', 'e']
+
+		assert.equal(true, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.match(/[A-E]/gi).hasOwnProperty('length'));
+		assert.equal(10, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.match(/[A-E]/gi).length);
+		assert.equal(false, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.match(/[A-E]/gi).hasOwnProperty('index'));
+		assert.equal(false, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.match(/[A-E]/gi).hasOwnProperty('input'));
+
 	});
 });
