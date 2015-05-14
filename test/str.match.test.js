@@ -2,7 +2,7 @@
 var assert = require('assert');
 
 describe('Test String.prototype.match', function () {
-	it('Should return an array containing the entire match result and any parentheses - captured matched results, or null if there were no matches', function (){
+	it('Should return an array containing the entire match result', function (){
 		/* An Array containing the entire match result and any parentheses - captured matched results, or null if there were no matches.
 		 */
 		/*
@@ -51,6 +51,23 @@ describe('Test String.prototype.match', function () {
 		assert.equal(10, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.match(/[A-E]/gi).length);
 		assert.equal(false, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.match(/[A-E]/gi).hasOwnProperty('index'));
 		assert.equal(false, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.match(/[A-E]/gi).hasOwnProperty('input'));
+		/* there are additional examples: here, in global case, any parentheses don't capture matched results. In other words parentheses are ignored */
+		assert.equal(true, '@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi).hasOwnProperty('length'));
+		assert.equal(2, '@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi).length);
+		assert.equal(false, '@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi).hasOwnProperty('index'));
+		assert.equal(false, '@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi).hasOwnProperty('input'));
+		assert.equal('V2000ab', '@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi)[0]);
+		assert.equal('V3000a', '@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi)[1]);
+
+		assert.equal(true, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi).hasOwnProperty('length'));
+		assert.equal(3, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi).length);
+		assert.equal(false, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi).hasOwnProperty('index'));
+		assert.equal(false, '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi).hasOwnProperty('input'));
+		assert.equal('V2000ab', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi)[0]);
+		assert.equal('V3000a', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi)[1]);
+		assert.equal('v2000', '@V2000ab@03V3000a!v2000'.match(/v[23]000(\w*)/gi)[2]);
+		//'@V2000ab@03V3000a!V200'.match(/v[23]000(\w*)/gi)
+
 
 	});
 });
