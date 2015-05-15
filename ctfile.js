@@ -70,34 +70,50 @@ var parseFlag = function (flag) {
 };
 
 /*
- *	Clean invisible characters (any Unicode spaces unless \n and ' ')
+ *	Clean invisible characters (any Unicode spaces unless \n - splitter and ' ' - separator)
  *	@method cleanInvChars
  *	@param {string} str the str to clean
+  *	@param {string=} splitter(optional). Specifies the character(s) to use as a splitter in returned string
+  *	@param {string=} separator(optional). Specifies the character(s) to use as a separator in returned string
   *	@return {string} A new string where white space charactes clean unless \n and ' '
  */
-var cleanInvChars = function (str) {
-	var tempstr = str.replace(/\n/gi, '\u9787'); /* \u9787 is an emoticon */
-	tempstr = tempstr.replace(/ /gi, '\u9786'); /* \u9786 is an emoticon */
+var cleanInvChars = function (str, splitter, separator) {
+	if (splitter === undefined)
+		splitter = '\n';
+	if (separator === undefined)
+		separator = ' ';
+	var tempstr = str.replace(RegExp(splitter,'gi'), '\u9787'); /* \u9787 is an emoticon */ /* splitter */
+	tempstr = tempstr.replace(RegExp(separator, 'gi'), '\u9786'); /* \u9786 is an emoticon */  /* separator */
 	tempstr = tempstr.replace(/\s+/gi, '');
-	tempstr = tempstr.replace(/\u9787/gi, '\n');
-	tempstr = tempstr.replace(/\u9786/gi, ' ');
+	tempstr = tempstr.replace(/\u9787/gi, splitter);
+	tempstr = tempstr.replace(/\u9786/gi, separator);
 	return tempstr;
 }
 
 /*
- *	Clean invisible characters (any Unicode spaces unless \n and ' ')
+ *	Clean invisible characters and replace splitters(any Unicode spaces unless \n - splitter and ' ' - separator)
  *	@method cleanInvChars
  *	@param {string} str the str to clean
+  *	@param {string=} splitter(optional). Specifies the character(s) to use as a splitter in returned string
+  *	@param {string=} separator(optional). Specifies the character(s) to use as a separator in returned string
   *	@return {string} A new string where white space charactes clean unless \n and ' '
  */
-var cleanInvChars2 = function (str) {
-	var tempstr = str.replace(/\n/gi, '\u9787'); /* \u9787 is an emoticon */
-	tempstr = tempstr.replace(/ /gi, '\u9786'); /* \u9786 is an emoticon */
+var cleanInvCharsWithReplacement = function (str, splitter, separator, newsplitter, newseparator) {
+	if (splitter === undefined)
+		splitter = '\n';
+	if (separator === undefined)
+		separator = ' ';
+	if (newsplitter === undefined)
+		newsplitter = '\n';
+	if (newseparator === undefined)
+		newseparator = ' ';
+	var tempstr = str.replace(RegExp(splitter, 'gi'), '\u9787'); /* \u9787 is an emoticon */ /* splitter */
+	tempstr = tempstr.replace(RegExp(separator, 'gi'), '\u9786'); /* \u9786 is an emoticon */  /* separator */
 	tempstr = tempstr.replace(/\s+/gi, '');
-	tempstr = tempstr.replace(/\u9787/gi, '@');
-	tempstr = tempstr.replace(/\u9786/gi, ' ');
+	tempstr = tempstr.replace(/\u9787/gi, newsplitter);
+	tempstr = tempstr.replace(/\u9786/gi, newseparator);
 	return tempstr;
-}
+};
 
 
 /*
@@ -145,6 +161,7 @@ var molfileHeaderTemplate = {
 	line4 : {
 		description: "V2000 commonly",
 		re_find: /V[23]000/g,
+		check: 'V[23]000',
 		re_check: RegExp('\\n' + poundoutMaskExt('.34') + 'V[23]000', 'g'),
 		mask: 'aaabbblllfffcccsssxxxrrrpppiiimmmvvvvvv',
 		format: {
@@ -203,6 +220,7 @@ var parseLineByTemplate = function (line, template, separator) {
  *	Counts for a match between a regular expression and a specified string 
  *	@method countRegExpEntry
  *	@param {Object} re the regular expression object.
+ *	@param {string} str thr input string (stream) where the match is to be found
  *	@return {number} A number of a match on the same global regular expression
  */
 var countRegExpEntry = function (re, str) {
