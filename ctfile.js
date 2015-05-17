@@ -230,6 +230,46 @@ var countRegExpEntry = function (re, str) {
 }
 
 /*
+ *	Check a molfile header global data corruption
+ *	@method checkMolfileHeaderDataCorruption
+ *	@param {string} stream the stream 
+ *	@param {Object} template the template of lined data consists from mask and format
+ *	@param {string=} spliter(optional). Specifies the character(s) to use as a line spliter
+  *	@return {Object} the state
+ */
+var checkMolfileHeaderDataCorruption = function (stream, template, spliter) {
+	var cs = '';
+	if (spliter === undefined) {
+		cs = cleanInvChars(stream); // clean stream
+		spliter = '\n';
+	}
+	else {
+		if (spliter !== '')
+			cs = cleanInvChars(stream); // clean stream
+		else
+			cs = stream;
+	}
+	var mask = template.mask;
+	if (template.check === undefined)
+		return { check: false };
+	var check = template.check;
+	var mul_match = 0;  //multiple matching
+	var hasmatch = cs.match(RegExp(check,'g')); // check key information
+	if (hasmatch === null)
+		return { check: false, match: mul_match };
+	mul_match = hasmatch.length; //detect the multiple matching
+	// construct a regular expression to check a lined mask
+	// '.' + str(mask - 'V2000'.length) should be like .34
+	var shouldPoundOut = '.' + (mask.length - hasmatch[0].length).toString();
+	re = RegExp(spliter + poundoutMaskExt(shouldPoundOut) + check, 'g');
+	if (countRegExpEntry(re, cs) !== mul_match) {
+		// should detect the data corruption
+		return { check: false, corrupted: true };
+	}
+	return { check: true };
+}
+
+/*
  *	Clean set of white space characters from string
  *	@method cleanWSChs
  *	@param {string} str the str to clean
@@ -369,5 +409,17 @@ CTFile.prototype.ut_cleanInvChars = function (str) {
 CTFile.prototype.ut_countRegExpEntry = function (re, str) {
 	return countRegExpEntry(re, str);
 }
+
+/*
+ *	UT: Check a molfile header global data corruption
+ *	@method checkMolfileHeaderDataCorruption
+ *	@param {string} stream the stream 
+ *	@param {Object} template the template of lined data consists from mask and format
+ *	@param {string=} spliter(optional). Specifies the character(s) to use as a line spliter
+  *	@return {Object} the state
+ */
+CTFile.prototype.ut_checkMolfileHeaderDataCorruption = function (stream, template, spliter) {
+	return checkMolfileHeaderDataCorruption(stream, template, spliter);
+};
 
 module.exports = new CTFile();

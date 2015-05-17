@@ -126,3 +126,9 @@ describe('Test internal function cleanInvChars', function () {
 	});
 });
 
+describe('Test internal function checkMolfileHeaderDataCorruption', function () {
+	it('should compare with patterns', function () {
+		assert.equal(true, ctfile.ut_checkMolfileHeaderDataCorruption('ACETYLCHOLINE & stuff\nGTMACCS - II11299515322D 1   0.00377     0.00000     0    GST\n \n 10  9  0  0  0  0              2 V2000\n    2.5762   -0.3621    0.0000 N   0  3  3  0  0  0'.repeat(15), ctfile.ut_getMolHeaderPattern().line4).check);
+	});
+});
+
