@@ -239,6 +239,8 @@ var countRegExpEntry = function (re, str) {
  */
 var checkMolfileHeaderDataCorruption = function (stream, template, spliter) {
 	var cs = '';
+	if (!(template) || !(template.check) || !(template.mask))
+		return { check: false, err: '@param template should be checked' };
 	if (spliter === undefined) {
 		cs = cleanInvChars(stream); // clean stream
 		spliter = '\n';
@@ -250,8 +252,6 @@ var checkMolfileHeaderDataCorruption = function (stream, template, spliter) {
 			cs = stream;
 	}
 	var mask = template.mask;
-	if (template.check === undefined)
-		return { check: false };
 	var check = template.check;
 	var mul_match = 0;  //multiple matching
 	var hasmatch = cs.match(RegExp(check,'g')); // check key information
