@@ -230,14 +230,14 @@ var countRegExpEntry = function (re, str) {
 }
 
 /*
- *	Check a molfile header global data corruption
- *	@method checkMolfileHeaderDataCorruption
+ *	Check a masked data on a data corruption by using global flag
+ *	@method checkMaskedDataCorruption
  *	@param {string} stream the stream 
  *	@param {Object} template the template of lined data consists from mask and format
  *	@param {string=} spliter(optional). Specifies the character(s) to use as a line spliter
   *	@return {Object} the state
  */
-var checkMolfileHeaderDataCorruption = function (stream, template, spliter) {
+var checkMaskedDataCorruption = function (stream, template, spliter) {
 	var cs = '';
 	if (!(template) || !(template.check) || !(template.mask))
 		return { check: false, err: '@param template should be checked' };
@@ -256,17 +256,20 @@ var checkMolfileHeaderDataCorruption = function (stream, template, spliter) {
 	var mul_match = 0;  //multiple matching
 	var hasmatch = cs.match(RegExp(check,'g')); // check key information
 	if (hasmatch === null)
-		return { check: false, match: mul_match };
+		return { check: false, m: mul_match };
 	mul_match = hasmatch.length; //detect the multiple matching
 	// construct a regular expression to check a lined mask
 	// '.' + str(mask - 'V2000'.length) should be like .34
 	var shouldPoundOut = '.' + (mask.length - hasmatch[0].length).toString();
 	re = RegExp(spliter + poundoutMaskExt(shouldPoundOut) + check, 'g');
-	if (countRegExpEntry(re, cs) !== mul_match) {
+	var uncorrupted = countRegExpEntry(re, cs);
+	if (uncorrupted !== mul_match) {
 		// should detect the data corruption
-		return { check: false, corrupted: true };
+		// m - a count of a multiple matching
+		// s - solid data in masked data
+		return { check: false, m: mul_match, s: uncorrupted };
 	}
-	return { check: true };
+	return { check: true, m: mul_match };
 }
 
 /*
@@ -411,15 +414,15 @@ CTFile.prototype.ut_countRegExpEntry = function (re, str) {
 }
 
 /*
- *	UT: Check a molfile header global data corruption
- *	@method checkMolfileHeaderDataCorruption
+ *	UT: Check a masked data on a data corruption by using global flag
+ *	@method checkMaskedDataCorruption
  *	@param {string} stream the stream 
  *	@param {Object} template the template of lined data consists from mask and format
  *	@param {string=} spliter(optional). Specifies the character(s) to use as a line spliter
   *	@return {Object} the state
  */
-CTFile.prototype.ut_checkMolfileHeaderDataCorruption = function (stream, template, spliter) {
-	return checkMolfileHeaderDataCorruption(stream, template, spliter);
+CTFile.prototype.ut_checkMaskedDataCorruption = function (stream, template, spliter) {
+	return checkMaskedDataCorruption(stream, template, spliter);
 };
 
 module.exports = new CTFile();

@@ -126,25 +126,32 @@ describe('Test internal function cleanInvChars', function () {
 	});
 });
 
-describe('Test internal function checkMolfileHeaderDataCorruption', function () {
+describe('Test internal function checkMaskedDataCorruption', function () {
 	it('should compare with patterns', function () {
-		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMolfileHeaderDataCorruption(' '));
-		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMolfileHeaderDataCorruption(' ', {}));
-		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMolfileHeaderDataCorruption(' ', { check: ' ' }));
-		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMolfileHeaderDataCorruption(' ', { mask: ' ' }));
-		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMolfileHeaderDataCorruption(' ', { mask: '', check: '' }));
-		assert.deepStrictEqual({ check: false, corrupted: true }, ctfile.ut_checkMolfileHeaderDataCorruption(' ', { check: ' ', mask: ' ' }));
-		assert.deepStrictEqual({ check: true }, ctfile.ut_checkMolfileHeaderDataCorruption('\n ', { check: ' ', mask: ' ' }));
-		assert.deepStrictEqual({ check: false, corrupted: true }, ctfile.ut_checkMolfileHeaderDataCorruption(' \n ', { check: ' ', mask: ' ' }));
-		assert.deepStrictEqual({ check: true }, ctfile.ut_checkMolfileHeaderDataCorruption('\n \n ', { check: ' ', mask: ' ' }));
-		assert.deepStrictEqual({ check: true }, ctfile.ut_checkMolfileHeaderDataCorruption(' ', { check: ' ', mask: ' ' }, ''));
-		assert.deepStrictEqual({ check: true }, ctfile.ut_checkMolfileHeaderDataCorruption(' \n', { check: ' ', mask: ' ' }, ''));
-		assert.deepStrictEqual({ check: true }, ctfile.ut_checkMolfileHeaderDataCorruption('@ ', { check: ' ', mask: ' ' }, '@'));
-		assert.deepStrictEqual({ check: true }, ctfile.ut_checkMolfileHeaderDataCorruption('@ @ ', { check: ' ', mask: ' ' }, '@'));
-		assert.deepStrictEqual({ check: false, corrupted: true }, ctfile.ut_checkMolfileHeaderDataCorruption(' @ @ ', { check: ' ', mask: ' ' }, '@'));
-		assert.deepStrictEqual({ check: false, match: 0 }, ctfile.ut_checkMolfileHeaderDataCorruption(' ', ctfile.ut_getMolHeaderPattern().line4));
-		assert.equal(false, ctfile.ut_checkMolfileHeaderDataCorruption(' ', ctfile.ut_getMolHeaderPattern().line4).check);
-		assert.equal(true, ctfile.ut_checkMolfileHeaderDataCorruption('ACETYLCHOLINE & stuff\nGTMACCS - II11299515322D 1   0.00377     0.00000     0    GST\n \n 10  9  0  0  0  0              2 V2000\n    2.5762   -0.3621    0.0000 N   0  3  3  0  0  0'.repeat(15), ctfile.ut_getMolHeaderPattern().line4).check);
+		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMaskedDataCorruption(' '));
+		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMaskedDataCorruption(' ', {}));
+		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMaskedDataCorruption(' ', { check: ' ' }));
+		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMaskedDataCorruption(' ', { mask: ' ' }));
+		assert.deepStrictEqual({ check: false, err: '@param template should be checked' }, ctfile.ut_checkMaskedDataCorruption(' ', { mask: '', check: '' }));
+		/*corrupted: true due to s!=m*/ 
+		assert.deepStrictEqual({ check: false, s: 0, m: 1 }, ctfile.ut_checkMaskedDataCorruption(' ', { check: ' ', mask: ' ' }));
+		assert.deepStrictEqual({ check: true, m: 1 }, ctfile.ut_checkMaskedDataCorruption('\n ', { check: ' ', mask: ' ' }));
+		assert.deepStrictEqual({ check: false, s: 1, m: 2 }, ctfile.ut_checkMaskedDataCorruption(' \n ', { check: ' ', mask: ' ' }));
+		assert.deepStrictEqual({ check: true, m: 2 }, ctfile.ut_checkMaskedDataCorruption('\n \n ', { check: ' ', mask: ' ' }));
+		assert.deepStrictEqual({ check: true, m: 1 }, ctfile.ut_checkMaskedDataCorruption(' ', { check: ' ', mask: ' ' }, ''));
+		assert.deepStrictEqual({ check: true, m: 1 }, ctfile.ut_checkMaskedDataCorruption(' \n', { check: ' ', mask: ' ' }, ''));
+		assert.deepStrictEqual({ check: true, m: 1 }, ctfile.ut_checkMaskedDataCorruption('@ ', { check: ' ', mask: ' ' }, '@'));
+		assert.deepStrictEqual({ check: true, m: 2 }, ctfile.ut_checkMaskedDataCorruption('@ @ ', { check: ' ', mask: ' ' }, '@'));
+		assert.deepStrictEqual({ check: false, s: 2, m: 3 }, ctfile.ut_checkMaskedDataCorruption(' @ @ ', { check: ' ', mask: ' ' }, '@'));
+		assert.deepStrictEqual({ check: true, m: 3 }, ctfile.ut_checkMaskedDataCorruption('@1 @2 @5 ', { check: ' ', mask: 'AB' }, '@'));
+		assert.deepStrictEqual({ check: false, s: 1, m: 3 }, ctfile.ut_checkMaskedDataCorruption('@1 @2 @5 ', { check: ' ', mask: 'B' }, '@2'));
+		assert.deepStrictEqual({ check: false, s: 0, m: 4 }, ctfile.ut_checkMaskedDataCorruption('@1 1@2 1@5 1', { check: '1', mask: 'B' }, '@2'));
+		assert.deepStrictEqual({ check: false, s: 1, m: 3 }, ctfile.ut_checkMaskedDataCorruption('@6 1@2 1@5 1', { check: '1', mask: 'AB' }, '@2'));
+		assert.deepStrictEqual({ check: true, m: 1 }, ctfile.ut_checkMaskedDataCorruption('@6 1@2 3@5 1', { check: '3', mask: 'AB' }, '@2'));
+		assert.deepStrictEqual({ check: true, m: 3 }, ctfile.ut_checkMaskedDataCorruption('@ 4 1@ 2 1@ 5 1', { check: '1', mask: 'aBc' }, '@ '));
+		assert.deepStrictEqual({ check: false, m: 0 }, ctfile.ut_checkMaskedDataCorruption(' ', ctfile.ut_getMolHeaderPattern().line4));
+		assert.equal(false, ctfile.ut_checkMaskedDataCorruption(' ', ctfile.ut_getMolHeaderPattern().line4).check);
+		assert.equal(true, ctfile.ut_checkMaskedDataCorruption('ACETYLCHOLINE & stuff\nGTMACCS - II11299515322D 1   0.00377     0.00000     0    GST\n \n 10  9  0  0  0  0              2 V2000\n    2.5762   -0.3621    0.0000 N   0  3  3  0  0  0'.repeat(15), ctfile.ut_getMolHeaderPattern().line4).check);
 	});
 });
 
