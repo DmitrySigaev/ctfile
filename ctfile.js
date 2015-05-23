@@ -31,6 +31,19 @@ CTFile.prototype.getVersion = function () {
 };
 
 /*
+ *	Counts for a match between a regular expression and a specified string 
+ *	@method countRegExpEntry
+ *	@param {Object} re the regular expression object.
+ *	@param {string} str thr input string (stream) where the match is to be found
+ *	@return {number} A number of a match on the same global regular expression
+ */
+var countRegExpEntry = function (re, str) {
+	var count = 0;
+	while (re.test(str)) { count++; } //  test() called multiple times on the same global regular expression instance will advance past the previous match
+	return count;
+};
+
+/*
  *	Converts FORTRAN notation like  A2 to AA
  *	@method poundoutMask
  *	@param {String} mask the string to pound out
@@ -89,6 +102,50 @@ var cleanInvChars = function (str, splitter, separator) {
 	tempstr = tempstr.replace(/\u9786/gi, separator);
 	return tempstr;
 }
+
+/*
+ *	Converts data to tagged (covert) data
+ *	@method doTaggedData
+ *	@param {string} str the str to clean
+  *	@param {string=} splitter(optional). Specifies the character(s) to use as a splitter in returned string
+  *	@param {string=} separator(optional). Specifies the character(s) to use as a separator in returned string
+  *	@return {object} A taggedData
+ */
+var doTaggedData = function (string, splitter, separator) {
+	var taggedData = {};
+	if (splitter === undefined)
+		splitter = '\n';
+	if (separator === undefined)
+		separator = ' ';
+	var unicode = 9787; /* \u263B is an emoticon */ 
+	var uncString = '';
+	do { uncString = String.fromCharCode(unicode); unicode--; } while(countRegExpEntry(RegExp(uncString, 'g'), string));
+	var newSplitter = uncString;
+	do { uncString = String.fromCharCode(unicode); unicode--; } while(countRegExpEntry(RegExp(uncString, 'g'), string));
+	var newSeparator = uncString;
+	taggedData.data = string.replace(RegExp(splitter, 'gi'), newSplitter); /* splitter */
+	taggedData.data = taggedData.data.replace(RegExp(separator, 'gi'), newSeparator);  /* eparator */
+	taggedData.data = taggedData.data.replace(/\s+/gi, '');
+	taggedData.splitter = { 0: newSplitter, 1: splitter };
+	taggedData.separator = { 0: newSeparator, 1: separator };
+	return taggedData;
+}
+
+/*
+ *	Converts tagged (covert) data to string
+ *	@method tdToString
+ *	@param {object} taggedData the taggedData 
+ *	@return {string} 
+ */
+var tdToString = function (taggedData) {
+	var tempstr = '';
+	if (!(taggedData) || !(taggedData.data) || !(taggedData.splitter) || !(taggedData.separator))
+		return tempstr;
+	tempstr = taggedData.data;
+	tempstr = tempstr.replace(RegExp(taggedData.splitter[0], 'g'), taggedData.splitter[1]);
+	tempstr = tempstr.replace(RegExp(taggedData.separator[0], 'g'), taggedData.separator[1]);
+	return tempstr;
+};
 
 /*
  *	Clean invisible characters and replace splitters(any Unicode spaces unless \n - splitter and ' ' - separator)
@@ -215,19 +272,6 @@ var parseLineByTemplate = function (line, template, separator) {
 	});
 	return out;
 };
-
-/*
- *	Counts for a match between a regular expression and a specified string 
- *	@method countRegExpEntry
- *	@param {Object} re the regular expression object.
- *	@param {string} str thr input string (stream) where the match is to be found
- *	@return {number} A number of a match on the same global regular expression
- */
-var countRegExpEntry = function (re, str) {
-	var count = 0;
-	while (re.test(str)) { count++; } //  test() called multiple times on the same global regular expression instance will advance past the previous match
-	return count;
-}
 
 /*
  *	Check a masked data on a data corruption by using global flag
