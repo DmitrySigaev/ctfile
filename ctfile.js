@@ -44,6 +44,16 @@ CTFile.prototype.parseCTfileFormat = function (mol) {
 };
 
 /*
+ *	Parses a string to check line by a template. Converts string data to boolean
+ *	@method parseFlag
+ *	@param {String} flag the string to parse
+ *	@return {Bolean} type from the flag string
+ */
+var parseFlag = function (flag) {
+	return ((parseInt(flag) == 1) || /^\s*true\s*$/.test(flag))? true : false;
+};
+
+/*
  *	Parses a line by a template
  *	@method parseLineByTemplate
  *	@param {String} line the line to parse
