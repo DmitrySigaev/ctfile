@@ -1,0 +1,31 @@
+{
+  "name": "ctfile",
+  "version": "0.0.1",
+  "description": "Stream reader for Chemical Table Files formats",
+  "main": "ctfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DmitrySigaev/ctfile.git"
+  },
+  "keywords": [
+    "chemistry",
+    "ctab",
+    "ctfile",
+    "mdl",
+    "mol",
+    "molecule",
+    "molfile",
+    "sdf"
+  ],
+  "author": "Dmitry Sigaev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DmitrySigaev/ctfile/issues"
+  },
+  "homepage": "https://github.com/DmitrySigaev/ctfile",
+  "devDependencies": {},
+  "dependencies": {}
+}
